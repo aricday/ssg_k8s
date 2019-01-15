@@ -1,0 +1,42 @@
+version: '3.0'
+
+services:
+  api-gateway:
+    image: caapim/gateway:9.4.00-addons
+    build:
+      context: ./add-ons
+      dockerfile: Dockerfile.addon   
+    ports:
+      - "8080"
+      - "8443"
+      - "9443"
+    environment:
+      SSG_CLUSTER_HOST: "docker.apim.ca"
+      SSG_CLUSTER_PASSWORD: "7layer"
+      SSG_DATABASE_USER: "gateway"
+      SSG_DATABASE_PASSWORD: "7layer"
+      SSG_DATABASE_JDBC_URL: "jdbc:mysql://mysql-ssg:3306/ssg"
+      SSG_ADMIN_USERNAME: "admin"
+      SSG_ADMIN_PASSWORD: "7layer"
+      ACCEPT_LICENSE: "true"
+#      SSG_JVM_HEAP: "4g"
+      EXTRA_JAVA_ARGS: "-XX:ParallelGCThreads=4 -Dcom.l7tech.bootstrap.env.license.enable=false -Dcom.l7tech.bootstrap.autoTrustSslKey=trustAnchor,TrustedFor.SSL,TrustedFor.SAML_ISSUER"
+ 
+  mysql-ssg:
+    image: mysql:5.7
+    expose:
+        - "3306"
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: "true"
+      MYSQL_USER: "gateway"
+      MYSQL_PASSWORD: "7layer" 
+      MYSQL_DATABASE: "ssg"
+    command:
+      - "--character-set-server=utf8"
+      - "--innodb_log_buffer_size=32M"
+      - "--innodb_log_file_size=80M"
+      - "--max_allowed_packet=8M"
+#    volumes:
+#      - ./data/mysql-ssg/conf:/etc/mysql/conf.d
+#      - ./data/mysql-ssg/data:/var/lib/mysql
+      
