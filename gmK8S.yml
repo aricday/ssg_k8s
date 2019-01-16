@@ -1,0 +1,106 @@
+# Generated 2018-05-31T18:18:56.858Z by Yipee.io
+# Application: ssg94
+# Last Modified: 2019-01-15 : Aric Day
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-gateway
+spec:
+  type: LoadBalancer
+  selector:
+    name: ssg94
+    component: api-gateway
+  ports:
+  - port: 8443
+    targetPort: https-port
+    protocol: TCP
+    name: https-port
+  - port: 9443
+    targetPort: admin-port
+    protocol: TCP
+    name: admin-port
+  - port: 8080
+    targetPort: http-port
+    protocol: TCP   
+    name: http-port
+         
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: api-gateway
+spec:
+  selector:
+    matchLabels:
+      name: ssg94
+      component: api-gateway
+  rollbackTo:
+    revision: 0
+  template:
+    spec:
+      containers:
+      - name: api-gateway
+        ports:
+        - name: http-port
+          containerPort: 8080
+        - name: https-port
+          containerPort: 8443
+        - name: admin-port
+          containerPort: 9443
+        # image: gcr.io/my-social-login-228716/ssg94
+        image: caapim/gateway
+        env:
+        - name: ACCEPT_LICENSE
+          value: 'true'
+        - name: EXTRA_JAVA_ARGS
+          value: -XX:ParallelGCThreads=4 -Dcom.l7tech.bootstrap.env.license.enable=true -Dcom.l7tech.bootstrap.autoTrustSslKey=trustAnchor,TrustedFor.SSL,TrustedFor.SAML_ISSUER
+        - name: SSG_ADMIN_PASSWORD
+          value: 7layer
+        - name: SSG_ADMIN_USERNAME
+          value: admin
+        - name: SSG_CLUSTER_HOST
+          value: docker.apim.ca
+        - name: SSG_CLUSTER_PASSWORD
+          value: 7layer
+        - name: SSG_DATABASE_JDBC_URL
+          value: jdbc:mysql://localhost:3306/ssg
+        - name: SSG_DATABASE_PASSWORD
+          value: 7layer
+        - name: SSG_DATABASE_USER
+          value: gateway
+        - name: SSG_INTERNAL_SERVICES
+          value: restman
+        - name: SSG_LICENSE
+          value: "put_license_here"
+      - name: mysql
+        args:
+          - --character-set-server=utf8
+          - --innodb_log_buffer_size=32M
+          - --innodb_log_file_size=80M
+          - --max_allowed_packet=8M        
+        env:
+        - name: MYSQL_DATABASE
+          value: ssg
+        - name: MYSQL_PASSWORD
+          value: 7layer
+        - name: MYSQL_RANDOM_ROOT_PASSWORD
+          value: 'true'
+        - name: MYSQL_USER
+          value: gateway
+        ports:
+        - containerPort: 3306
+          protocol: TCP
+        image: mysql/mysql-server:5.7
+    metadata:
+      labels:
+        name: ssg94
+        component: api-gateway
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  replicas: 1
+  revisionHistoryLimit: 2
+
