@@ -48,6 +48,6 @@ Convert the PEM certificate to PKCS12:
   `   openssl pkcs12 -export -clcerts -in config/certs/k8s.cert.pem -inkey config/certs/k8s.key -out config/certs/k8s.cert.p12  `
 
 ### Edit the values to suit your needs, then run something like for variable input:
-` echo "LICENSE=\"$(gzip -c add-ons/license/license.xml | base64 --wrap=0)\"" > add-ons/license/license.gz.base64 `
+` echo "LICENSE=\"$(gzip -c add-ons/license/license.xml | base64)\"" > add-ons/license/license.gz.base64 `
 
 ` echo "SSLKEY=\"$(cat config/certs/k8s.cert.p12 | base64)\"" > config/certs/k8s.cert.p12.base64 `
