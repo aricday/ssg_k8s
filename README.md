@@ -11,7 +11,8 @@ Repo to enable GCP Kubernetes Engine cluster with ssg_v9.4
 * Add your GMU bundles to /ssg94/add-on/bundles folder if you have any assets to bootstrap.
 
 #### Run "docker-compose -f docker-compose.yml build" to build a custom container
-1) Tag your image use a name following this format “gcr.io/{your_project_id}/ssg94”
+1) ` docker-compose -f docker-compose.yml build `
+2) Tag your image use a name following this format “gcr.io/{your_project_id}/ssg94”
 
         docker tag {image_id} {new_image_tag}
 
@@ -23,7 +24,7 @@ Repo to enable GCP Kubernetes Engine cluster with ssg_v9.4
 ` gcloud container images list `
 
 ## Create kubernete clusters, sample commands are:
-` gcloud container clusters create gatewaydemo --no-enable-autorepair `
+` gcloud container clusters create gatewaydemo --no-enable-autorepair --num-nodes=1 `
 
 ` gcloud container clusters get-credentials gatewaydemo `
 
@@ -38,3 +39,14 @@ Repo to enable GCP Kubernetes Engine cluster with ssg_v9.4
 ` kubectl get services `
 
 ` kubectl describe pods api-gateway `
+
+## Delete the kubernetes services:
+
+` kubectl delete -f ssg94.yml `
+
+## Delete cluster:
+` gcloud container clusters delete gatewaydemo `
+
+
+# Next Step
+Navigate to the [SSL_K8S README](ssl_k8s) to get started with SSL.
