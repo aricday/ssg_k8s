@@ -1,6 +1,6 @@
 # Generated 2018-05-31T18:18:56.858Z by Yipee.io
 # Application: ssg94
-# Last Modified: 2019-01-15 : Aric Day
+# Last Modified: 2020-01-24 : Aric Day
 
 apiVersion: v1
 kind: Service
@@ -39,6 +39,9 @@ spec:
     revision: 0
   template:
     spec:
+      volumes:
+        - name: restman
+          emptyDir: {}
       containers:
       - name: api-gateway
         ports:
@@ -48,15 +51,17 @@ spec:
           containerPort: 8443
         - name: admin-port
           containerPort: 9443
-        # image: gcr.io/my-social-login-228716/ssg94
         image: caapim/gateway
+        volumeMounts:
+          - name: restman
+            mountPath: /opt/SecureSpan/Gateway/node/default/etc/bootstrap/services/restman
         env:
         - name: ACCEPT_LICENSE
           value: 'true'
         - name: EXTRA_JAVA_ARGS
           value: -XX:ParallelGCThreads=4 -Dcom.l7tech.bootstrap.env.license.enable=true -Dcom.l7tech.bootstrap.autoTrustSslKey=trustAnchor,TrustedFor.SSL,TrustedFor.SAML_ISSUER
         - name: SSG_ADMIN_PASSWORD
-          value: 7layer
+          value: CAdemo123
         - name: SSG_ADMIN_USERNAME
           value: admin
         - name: SSG_CLUSTER_HOST
@@ -103,4 +108,3 @@ spec:
       maxUnavailable: 1
   replicas: 1
   revisionHistoryLimit: 2
-
