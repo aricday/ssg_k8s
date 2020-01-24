@@ -15,7 +15,7 @@ Repo to enable GCP Kubernetes Engine cluster with ssg_v9.4
 * Add your gateway license file to /ssg94/add-on/license folder.
 ` echo "LICENSE=\"$(gzip -c add-ons/license/license.xml | base64)\""  `
 
-* Add the base64 encoded license file at [gmK8S.yml](gmK8S.yml#L75) to enable the gateway.
+* Add the base64 encoded license file at [gmK8S.yml](gmK8S.yml#L80) to enable the gateway.
 
 
 ## Create kubernetes services:
